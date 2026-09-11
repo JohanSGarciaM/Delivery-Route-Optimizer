@@ -1,0 +1,19 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: beige;
+}
+
+#root {
+  width: 100%;
+}
+
+h1 { 
+  margin: 50px;
+  font-style: oblique;
+  text-align: center;
+}
