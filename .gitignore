@@ -1,1 +1,3 @@
-**/*.env
+#Frontend Environment Variable MAPS_BROWSER_KEY
+
+frontend/.env
