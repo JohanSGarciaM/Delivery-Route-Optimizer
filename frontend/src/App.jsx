@@ -7,7 +7,7 @@ function App() {
 
   const [origin, setOrigin] = useState(null);
   const [deliveries, setDeliveries] = useState([]);
-  const [originClearTrigger, setOriginClearTrigger] = useState(0);
+  const [originClearTrigger, setOriginClearTrigger] = useState(false);
 
   const addDelivery = () => {
     if (deliveries.length >= 10) {
@@ -100,7 +100,7 @@ function App() {
               type="button"
               onClick={() => {
                 setOrigin(null);
-                setOriginClearTrigger((value) => value + 1);
+                setOriginClearTrigger((value) => !value);
               }}
             >❌ Eliminar origen
             </button>
