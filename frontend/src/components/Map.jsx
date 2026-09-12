@@ -1,21 +1,18 @@
 import { useEffect, useRef } from "react";
-import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
+import { loadGoogleMaps } from "../services/googleMaps";
 
 function Map() {
-    const mapRef = useRef(null);
+  const mapRef = useRef(null);
 
-    useEffect(() => {
+  useEffect(() => {
     const loadMap = async () => {
-      setOptions({
-        key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-        v: "weekly",
-      });
-
-      const { Map } = await importLibrary("maps");
+      const { maps } = await loadGoogleMaps();
 
       if (!mapRef.current) {
         return;
       }
+
+      const { Map } = maps;
 
       new Map(mapRef.current, {
         center: {
@@ -39,7 +36,6 @@ function Map() {
       }}
     />
   );
-};
+}
 
 export default Map;
-

@@ -1,0 +1,19 @@
+import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
+
+let initialized = false;
+
+export async function loadGoogleMaps() {
+    if (!initialized) {
+        setOptions({
+            key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+            v: "weekly",
+        });
+
+        initialized = true;
+    }
+
+    return {
+        maps: await importLibrary("maps"),
+        places: await importLibrary("places"),
+    };
+}

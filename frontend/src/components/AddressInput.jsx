@@ -1,58 +1,81 @@
 import { useEffect, useRef } from "react";
-import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
+import { loadGoogleMaps } from "../services/googleMaps";
 
-function AddressInput() {
-    const containerRef = useRef(null);
-    const initializedRef = useRef(false);
+function AddressInput({ onPlaceSelected, clearTrigger = 0 }) {
+  const containerRef = useRef(null);
+  const initializedRef = useRef(false);
+  const autocompleteRef = useRef(null);
 
-    useEffect(() => {
+  useEffect(() => {
+    if (initializedRef.current) {
+      return;
+    }
 
-        if (initializedRef.current) { return;}
+    initializedRef.current = true;
 
-        initializedRef.current = true;
-        const loadPlaces = async () => {
-            setOptions({
-                key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-                v: "weekly",
-            });
+    const loadPlaces = async () => {
+      const { places } = await loadGoogleMaps();
 
-            const { PlaceAutocompleteElement } = await importLibrary("places");
-            
-            if (!containerRef.current) { return;}
+      if (!containerRef.current) {
+        return;
+      }
 
-            const autocomplete = new PlaceAutocompleteElement();
+      const { PlaceAutocompleteElement } = places;
 
-            autocomplete.placeholder = "Ingresa dirección de Origen";
+      const autocomplete = new PlaceAutocompleteElement();
 
-            containerRef.current.appendChild(autocomplete);
+      autocomplete.placeholder = "Ingresa una dirección";
 
-            autocomplete.addEventListener("gmp-select", async ({ placePrediction }) => {
-                const place = placePrediction.toPlace();
+      autocompleteRef.current = autocomplete;
 
-                await place.fetchFields({
-                    fields: ["displayName", "formattedAddress", "location", "id"],
-                });
+      containerRef.current.appendChild(autocomplete);
 
-                console.log("Lugar seleccionado:", {
-                    id: place.id,
-                    nombre: place.displayName,
-                    direccion: place.formattedAddress,
-                    latitud: place.location?.lat(),
-                    longitud: place.location?.lng(),
-                });
-            });
-        };
-        loadPlaces();
-    }, []);
+      autocomplete.addEventListener(
+        "gmp-select",
+        async ({ placePrediction }) => {
+          const place = placePrediction.toPlace();
 
-    return (
-        <div ref={containerRef}
-            style={{
-                width: "50%",
-                margin: "0 auto",
-            }}
-        ></div>
-    );
+          await place.fetchFields({
+            fields: [
+              "displayName",
+              "formattedAddress",
+              "location",
+              "id",
+            ],
+          });
+
+          const selectedPlace = {
+            placeId: place.id,
+            name: place.displayName,
+            address: place.formattedAddress,
+            latitude: place.location?.lat(),
+            longitude: place.location?.lng(),
+          };
+
+          console.log("Lugar seleccionado:", selectedPlace);
+
+          if (onPlaceSelected) {
+            onPlaceSelected(selectedPlace);
+          }
+        }
+      );
+    };
+
+    loadPlaces();
+  }, [onPlaceSelected]);
+
+  useEffect(() => {
+    if (autocompleteRef.current) {
+      autocompleteRef.current.value = "";
+    }
+  }, [clearTrigger]);
+
+  return <div ref={containerRef}
+    style={{
+        width: "50%",
+        margin: "0 auto",
+    }}
+  ></div>;
 }
 
 export default AddressInput;
