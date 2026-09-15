@@ -43,7 +43,7 @@ function App() {
     );
   };
 
-  const calculateRoute = () => {
+  const calculateRoute = async () => {
     if (!origin) {
       alert("Debes seleccionar un origen");
       return;
@@ -80,9 +80,32 @@ function App() {
 
     console.log("Solicitud de ruta:", routeRequest);
 
-    alert("Datos válidos. Revisa Consola.");
+    try {
+      const response = await fetch(
+        "http://localhost:3000/routes/calculate",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(routeRequest),
+        }
+      );
 
-  }
+      const result = await response.json();
+
+      console.log("Respuesta del backend:", result);
+
+      alert("El backend recibió correctamente la solicitud.");
+    } catch (error){
+      console.error(
+        "Error al comunicarse con el backend:",
+        error
+      );
+
+      alert("No fue posible comunicarse con el backend.");
+    }
+  };
 
   return (
     <div>
