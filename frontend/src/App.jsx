@@ -8,6 +8,7 @@ function App() {
   const [origin, setOrigin] = useState(null);
   const [deliveries, setDeliveries] = useState([]);
   const [originClearTrigger, setOriginClearTrigger] = useState(false);
+  const [googleRoute, setGoogleRoute] = useState(null);
 
   const addDelivery = () => {
     if (deliveries.length >= 10) {
@@ -95,8 +96,9 @@ function App() {
       const result = await response.json();
 
       console.log("Respuesta del backend:", result);
+      setGoogleRoute(result.googleRoute);
 
-      alert("El backend recibió correctamente la solicitud.");
+      alert("Ruta calculada correctamente.");
     } catch (error){
       console.error(
         "Error al comunicarse con el backend:",
@@ -143,7 +145,7 @@ function App() {
         onClick={calculateRoute}
       >🚚 Calcular Ruta</button>
 
-      <Map />
+      <Map googleRoute={googleRoute}/>
     </div>
   );
 }
