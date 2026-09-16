@@ -96,8 +96,20 @@ function Map({
       
       const originContent = document.createElement("div");
       originContent.textContent = "O";
-      originContent.style.fontWeight = "bold";
-      originContent.style.fontSize = "16px";
+      Object.assign(originContent.style,{
+        width: "36px",
+        height: "36px",
+        borderRadius: "50%",
+        background: "#1b8f4d",
+        color: "#ffffff",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontWeight: "bold",
+        fontSize: "16px",
+        border: "3px solid white",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.35)",
+      });
 
       const originMarker = new AdvancedMarkerElement({
         map: mapInstanceRef.current,
@@ -120,8 +132,21 @@ function Map({
 
           const markerContent = document.createElement("div");
           markerContent.textContent = String(index+1);
-          markerContent.style.fontWeight = "bold";
-          markerContent.style.fontSize = "16px";
+
+          Object.assign(markerContent.style,{
+            width: "34px",
+            height: "34px",
+            borderRadius: "50%",
+            background: "#1f6feb",
+            color: "#ffffff",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontWeight: "bold",
+            fontSize: "15px",
+            border: "3px solid white",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.35)",
+          })
 
           const deliveryMarker = new AdvancedMarkerElement({
             map: mapInstanceRef.current,

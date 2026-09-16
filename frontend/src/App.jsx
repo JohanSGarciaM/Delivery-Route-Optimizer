@@ -2,6 +2,7 @@ import { useState } from "react";
 import Map from "./components/Map";
 import AddressInput from "./components/AddressInput";
 import DeliveryList from "./components/DeliveryList";
+import RouteSummary from "./components/RouteSummary";
 
 function App() {
 
@@ -30,6 +31,9 @@ function App() {
     setDeliveries(
       deliveries.filter((delivery) => delivery.id !== id)
     );
+
+    setGoogleRoute(null);
+    setOptimizedOrder([]);
   };
 
   const handlePlaceSelected = (id, place) => {
@@ -128,6 +132,8 @@ function App() {
               onClick={() => {
                 setOrigin(null);
                 setOriginClearTrigger((value) => !value);
+                setGoogleRoute(null);
+                setOptimizedOrder([]);
               }}
             >❌ Eliminar origen
             </button>
@@ -152,6 +158,12 @@ function App() {
         origin={origin}
         deliveries={deliveries}
         optimizedOrder={optimizedOrder}
+      />
+      <RouteSummary
+        googleRoute={googleRoute}
+        optimizedOrder={optimizedOrder}
+        deliveries={deliveries}
+        origin={origin}
       />
     </div>
   );

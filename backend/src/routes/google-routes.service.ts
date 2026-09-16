@@ -192,7 +192,7 @@ export class GoogleRoutesService {
                     'Content-Type': 'application/json',
                     'X-Goog-Api-Key': this.apiKey,
                     'X-Goog-FieldMask':
-                    'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline',
+                    'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline,routes.legs',
                 },
                 body: JSON.stringify(requestBody),
             },
@@ -207,6 +207,8 @@ export class GoogleRoutesService {
         }
 
         const result = await response.json();
+
+        console.log('Tramos de la ruta:', result.routes?.[0]?.legs,);
         
         return result;
     }
