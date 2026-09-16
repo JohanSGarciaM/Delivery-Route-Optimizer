@@ -17,5 +17,6 @@ export async function loadGoogleMaps() {
         maps: await importLibrary("maps"),
         places: await importLibrary("places"),
         geometry: await importLibrary("geometry"),
+        marker: await importLibrary("marker"),
     };
 }

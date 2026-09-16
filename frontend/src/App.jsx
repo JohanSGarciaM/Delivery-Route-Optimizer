@@ -9,6 +9,7 @@ function App() {
   const [deliveries, setDeliveries] = useState([]);
   const [originClearTrigger, setOriginClearTrigger] = useState(false);
   const [googleRoute, setGoogleRoute] = useState(null);
+  const [optimizedOrder, setOptimizedOrder] = useState([]);
 
   const addDelivery = () => {
     if (deliveries.length >= 10) {
@@ -97,6 +98,7 @@ function App() {
 
       console.log("Respuesta del backend:", result);
       setGoogleRoute(result.googleRoute);
+      setOptimizedOrder(result.optimization.order);
 
       alert("Ruta calculada correctamente.");
     } catch (error){
@@ -145,7 +147,12 @@ function App() {
         onClick={calculateRoute}
       >🚚 Calcular Ruta</button>
 
-      <Map googleRoute={googleRoute}/>
+      <Map 
+        googleRoute={googleRoute}
+        origin={origin}
+        deliveries={deliveries}
+        optimizedOrder={optimizedOrder}
+      />
     </div>
   );
 }
