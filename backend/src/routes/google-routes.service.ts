@@ -116,8 +116,6 @@ export class GoogleRoutesService {
                 item.distanceMeters ?? '0';
         }
 
-        console.log(`Matriz procesada para ${size} puntos.`);
-
         return {
             durationMatrix,
             distanceMatrix,
@@ -205,8 +203,6 @@ export class GoogleRoutesService {
         }
 
         const result = await response.json();
-
-        console.log('Tramos de la ruta:', result.routes?.[0]?.legs,);
         
         return result;
     }
