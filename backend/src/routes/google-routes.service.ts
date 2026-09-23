@@ -14,19 +14,6 @@ export class GoogleRoutesService {
             this.configService.get<string>('MAPS_SERVER_KEY') ?? '';
     }
 
-    async testConnection() {
-        if (!this.apiKey) {
-            throw new Error(
-                'MAPS_SERVER_KEY no está configurada en el archivo .env',
-            );
-        }
-
-        console.log('Consultando Google Routes API..');
-
-        return {
-            message: 'GoogleRoutesService Funcionando',
-        };
-    }
     async getTravelTimeMatrix(data : CalculateRouteDto) {
         if (!this.apiKey) {
             throw new Error(
@@ -77,7 +64,7 @@ export class GoogleRoutesService {
                 'Content-Type': 'application/json',
                 'X-Goog-Api-Key': this.apiKey,
                 'X-Goog-FieldMask':
-                    'originIndex,destinationIndex,duration,distanceMeters',
+                    'originIndex,destinationIndex,status,condition,duration,distanceMeters',
             },
 
             body: JSON.stringify(body),
@@ -111,11 +98,22 @@ export class GoogleRoutesService {
             const originIndex = item.originIndex;
             const destinationIndex = item.destinationIndex;
 
+            if (originIndex === destinationIndex) {
+                continue;
+            }
+
+            if (item.condition !== 'ROUTE_EXISTS') {
+                throw new Error(
+                    `No existe una ruta válida entre el punto ${originIndex} y el punto ${destinationIndex}.`,
+                );
+            }
+
+
             durationMatrix[originIndex][destinationIndex] =
                 this.parseDuration(item.duration);
 
             distanceMatrix[originIndex][destinationIndex] =
-                item.distanceMeters ?? '0'
+                item.distanceMeters ?? '0';
         }
 
         console.log(`Matriz procesada para ${size} puntos.`);
