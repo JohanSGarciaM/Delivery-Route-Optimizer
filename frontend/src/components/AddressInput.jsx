@@ -26,6 +26,8 @@ function AddressInput({ onPlaceSelected, clearTrigger = 0 }) {
 
       autocomplete.placeholder = "Ingresa una dirección";
 
+      autocomplete.className = "address-autocomplete";
+
       autocompleteRef.current = autocomplete;
 
       containerRef.current.appendChild(autocomplete);
@@ -70,12 +72,12 @@ function AddressInput({ onPlaceSelected, clearTrigger = 0 }) {
     }
   }, [clearTrigger]);
 
-  return <div ref={containerRef}
-    style={{
-        width: "50%",
-        margin: "0 auto",
-    }}
-  ></div>;
+  return (
+    <div
+      ref={containerRef}
+      className="address-input-container"
+    />
+  );
 }
 
 export default AddressInput;

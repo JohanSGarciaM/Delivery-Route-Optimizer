@@ -7,41 +7,103 @@ function DeliveryList({
   onPlaceSelected,
 }) {
   return (
-    <section>
-      <h2>Domicilios</h2>
+    <div className="delivery-list">
 
-      {deliveries.map((delivery, index) => (
-        <div key={delivery.id}>
-          <span>{index + 1}. </span>
+      {deliveries.length === 0 ? (
+        <div className="empty-deliveries">
 
-          <AddressInput
-            onPlaceSelected={(place) =>
-              onPlaceSelected(delivery.id, place)
-            }
-          />
+          <div className="empty-icon">
+            📦
+          </div>
 
-          <button
-            type="button"
-            onClick={() => onRemoveDelivery(delivery.id)}
-          >
-            ❌
-          </button>
+          <strong>
+            Aún no hay domicilios
+          </strong>
 
-          {delivery.place && (
-            <div>
-              <strong>{delivery.place.address}</strong>
-            </div>
-          )}
+          <p>
+            Agrega las direcciones que deseas incluir
+            en tu ruta.
+          </p>
+
         </div>
-      ))}
+      ) : (
+        <div className="delivery-items">
 
-      <button
-        type="button"
-        onClick={onAddDelivery}
-      >
-        + Agregar domicilio
-      </button>
-    </section>
+          {deliveries.map((delivery, index) => (
+            <div
+              key={delivery.id}
+              className="delivery-item"
+            >
+
+              <div className="delivery-number">
+                {String(index + 1).padStart(2, "0")}
+              </div>
+
+
+              <div className="delivery-content">
+
+                <AddressInput
+                  onPlaceSelected={(place) =>
+                    onPlaceSelected(
+                      delivery.id,
+                      place
+                    )
+                  }
+                />
+
+
+                {delivery.place && (
+                  <div className="delivery-selected">
+
+                    <span className="location-icon">
+                      📍
+                    </span>
+
+                    <span>
+                      {delivery.place.address}
+                    </span>
+
+                  </div>
+                )}
+
+              </div>
+
+
+              <button
+                type="button"
+                className="delivery-remove"
+                onClick={() =>
+                  onRemoveDelivery(
+                    delivery.id
+                  )
+                }
+                title="Eliminar domicilio"
+                aria-label={`Eliminar domicilio ${
+                  index + 1
+                }`}
+              >
+                ×
+              </button>
+
+            </div>
+          ))}
+
+        </div>
+      )}
+
+
+      {deliveries.length < 10 && (
+        <button
+          type="button"
+          className="add-delivery-button"
+          onClick={onAddDelivery}
+        >
+          <span>＋</span>
+          Agregar domicilio
+        </button>
+      )}
+
+    </div>
   );
 }
 

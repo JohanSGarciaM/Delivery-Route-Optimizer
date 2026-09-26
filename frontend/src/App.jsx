@@ -16,7 +16,7 @@ function App() {
 
   const addDelivery = () => {
     if (deliveries.length >= 10) {
-      alert("Máximo 10 domicilios.");
+      setError("Máximo 10 domicilios.");
       return;
     }
 
@@ -102,11 +102,7 @@ function App() {
       })),
     };
 
-    console.log("Solicitud de ruta:", routeRequest);
-
     setIsCalculating(true);
-
-
 
     try {
       const response = await fetch(
@@ -121,8 +117,6 @@ function App() {
       );
 
       const result = await response.json();
-
-      console.log("Respuesta del backend:", result);
 
       if (!response.ok) {
         const backendMessage = Array.isArray(result.message)
@@ -148,10 +142,7 @@ function App() {
       setGoogleRoute(result.googleRoute);
       setOptimizedOrder(result.optimization.order);
     } catch (error) {
-      console.error(
-        "Error al calcular la ruta:",
-        error
-      );
+      console.error("Error al calcular la ruta:", error);
 
       setGoogleRoute(null);
       setOptimizedOrder([]);
@@ -159,9 +150,7 @@ function App() {
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError(
-          "No fue posible calcular la ruta."
-        );
+        setError("No fue posible calcular la ruta.");
       }
     } finally {
       setIsCalculating(false);
@@ -169,83 +158,212 @@ function App() {
   };
 
   return (
-    <div>
-      <h1>Delivery Route Optimizer</h1>
+    <div className="app-shell">
 
-      <section>
-        <h2>Origen</h2>
+      <header className="app-header">
+        <div className="brand">
+          <div className="brand-icon">🚚</div>
 
-        <AddressInput
-          onPlaceSelected={setOrigin}
-          clearTrigger={originClearTrigger}
-        />
-
-        {origin && (
           <div>
-            <strong>{origin.address}</strong>
+            <h1>Route Optimizer</h1>
+            <span>Delivery management</span>
+          </div>
+        </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                setOrigin(null);
-                setOriginClearTrigger(
-                  (value) => !value
-                );
-                setGoogleRoute(null);
-                setOptimizedOrder([]);
-                setError(null);
-              }}
-            >
-              ❌ Eliminar origen
-            </button>
+        <div className="status">
+          <span className="status-dot"></span>
+          Sistema activo
+        </div>
+      </header>
+
+
+      <main className="app-content">
+
+        <section className="hero">
+          <div>
+            <span className="eyebrow">
+              PLANIFICACIÓN DE ENTREGAS
+            </span>
+
+            <h2>
+              Optimiza tu ruta
+            </h2>
+
+            <p>
+              Organiza tus domicilios y encuentra el recorrido
+              más eficiente considerando distancia y tráfico.
+            </p>
+          </div>
+        </section>
+
+
+        <section className="planning-grid">
+
+          <div className="card">
+
+            <div className="card-header">
+              <div>
+                <span className="card-icon origin-icon">
+                  📍
+                </span>
+
+                <div>
+                  <h3>Origen</h3>
+                  <p>Punto de partida</p>
+                </div>
+              </div>
+            </div>
+
+
+            <AddressInput
+              onPlaceSelected={setOrigin}
+              clearTrigger={originClearTrigger}
+            />
+
+
+            {origin && (
+              <div className="selected-place">
+
+                <div className="selected-place-info">
+                  <span>📍</span>
+
+                  <strong>
+                    {origin.address}
+                  </strong>
+                </div>
+
+                <button
+                  type="button"
+                  className="icon-button danger"
+                  onClick={() => {
+                    setOrigin(null);
+                    setOriginClearTrigger(
+                      (value) => !value
+                    );
+                    setGoogleRoute(null);
+                    setOptimizedOrder([]);
+                    setError(null);
+                  }}
+                  title="Eliminar origen"
+                >
+                  ×
+                </button>
+
+              </div>
+            )}
+
+          </div>
+
+
+          <div className="card">
+
+            <div className="card-header">
+
+              <div>
+                <span className="card-icon delivery-icon">
+                  📦
+                </span>
+
+                <div>
+                  <h3>Domicilios</h3>
+
+                  <p>
+                    {deliveries.length} de 10
+                    {deliveries.length === 1
+                      ? " entrega"
+                      : " entregas"}
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+
+            <DeliveryList
+              deliveries={deliveries}
+              onAddDelivery={addDelivery}
+              onRemoveDelivery={removeDelivery}
+              onPlaceSelected={handlePlaceSelected}
+            />
+
+          </div>
+
+        </section>
+
+
+        {error && (
+          <div
+            className="error-message"
+            role="alert"
+          >
+            <span>⚠️</span>
+
+            <div>
+              <strong>No se pudo calcular la ruta</strong>
+              <p>{error}</p>
+            </div>
           </div>
         )}
-      </section>
 
-      <DeliveryList
-        deliveries={deliveries}
-        onAddDelivery={addDelivery}
-        onRemoveDelivery={removeDelivery}
-        onPlaceSelected={handlePlaceSelected}
-      />
 
-      {error && (
-        <div
-          role="alert"
-          style={{
-            marginTop: "10px",
-            padding: "10px",
-            border: "1px solid #cc0000",
-            borderRadius: "6px",
-          }}
-        >
-          <strong>Error:</strong> {error}
+        <div className="calculate-container">
+
+          <button
+            type="button"
+            className="calculate-button"
+            onClick={calculateRoute}
+            disabled={isCalculating}
+          >
+            {isCalculating ? (
+              <>
+                <span className="spinner"></span>
+                Calculando ruta...
+              </>
+            ) : (
+              <>
+                🚚
+                Calcular ruta
+              </>
+            )}
+          </button>
+
         </div>
-      )}
 
-      <button
-        type="button"
-        onClick={calculateRoute}
-        disabled={isCalculating}
-      >
-        {isCalculating
-          ? "⏳ Calculando ruta..."
-          : "🚚 Calcular Ruta"}
-      </button>
 
-      <Map
-        googleRoute={googleRoute}
-        origin={origin}
-        deliveries={deliveries}
-        optimizedOrder={optimizedOrder}
-      />
+        <section className="map-card">
 
-      <RouteSummary
-        googleRoute={googleRoute}
-        optimizedOrder={optimizedOrder}
-        deliveries={deliveries}
-        origin={origin}
-      />
+          <div className="map-header">
+            <div>
+              <h3>Mapa de ruta</h3>
+              <p>
+                Visualización del recorrido optimizado
+              </p>
+            </div>
+          </div>
+
+          <Map
+            googleRoute={googleRoute}
+            origin={origin}
+            deliveries={deliveries}
+            optimizedOrder={optimizedOrder}
+          />
+
+        </section>
+
+
+        <section className="summary-section">
+
+          <RouteSummary
+            googleRoute={googleRoute}
+            optimizedOrder={optimizedOrder}
+            deliveries={deliveries}
+            origin={origin}
+          />
+
+        </section>
+
+      </main>
+
     </div>
   );
 }
